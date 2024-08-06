@@ -8,7 +8,9 @@ package de.example;
 // correctChoices[] = { "Luxemburg" }
 // AnswerTry - chosen[] = { "Luxemburg" }
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Question {
     private String description;
@@ -73,5 +75,18 @@ public class Question {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(getDescription(), question.getDescription()) && Objects.deepEquals(getChoices(), question.getChoices()) && Objects.deepEquals(getCorrectChoices(), question.getCorrectChoices());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDescription(), Arrays.hashCode(getChoices()), Arrays.hashCode(getCorrectChoices()));
     }
 }
