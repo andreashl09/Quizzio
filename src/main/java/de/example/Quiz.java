@@ -1,7 +1,6 @@
 package de.example;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,6 +25,22 @@ public class Quiz {
         String[] correctChoices3 = {"China", "Indien"};
         questionList.add(new Question(description3, choices3, correctChoices3));
 
+        String description4 = "Welches Land hat die größte Fläche?";
+        String[] choices4 = {"Russland", "Kanada", "China", "USA"};
+        String[] correctChoices4 = {"Russland"};
+        questionList.add(new Question(description4, choices4, correctChoices4));
+
+        String description5 = "Welches dieser Länder gehören zu den G7?";
+        String[] choices5 = {"Deutschland", "China", "Italien", "Brasilien"};
+        String[] correctChoices5 = {"Deutschland", "Italien"};
+        questionList.add(new Question(description5, choices5, correctChoices5));
+
+        String description6 = "Welches dieser Länder haben Euro als Währung?";
+        String[] choices6 = {"Deutschland", "Frankreich", "Schweden", "Polen"};
+        String[] correctChoices6 = {"Deutschland", "Frankreich"};
+        questionList.add(new Question(description6, choices6, correctChoices6));
+
+
     }
 
     public Question randomQuestion() {
@@ -36,59 +51,49 @@ public class Quiz {
         return question;
     }
 
-    public Question playQuestion() {
-        Question playQuestion = randomQuestion();
+    public void playQuestion(Question question) {
         StringBuilder sb = new StringBuilder();
         sb.append("Bei mehreren Anworten Zahlen durch ein Komma trennen.\n");
-        sb.append(playQuestion.getDescription());
+        sb.append(question.getDescription());
         sb.append("\n");
         sb.append("Deine Auswahlmöglichkeiten:\n");
         int index = 1;
-        for (String s : playQuestion.getChoices()) {
+        for (String s : question.getChoices()) {
             sb.append(index + ": " + s + " ");
             ++index;
         }
         System.out.println(sb.toString());
-        return playQuestion;
     }
 
     public User getUser() {
         return user;
     }
 
-    public User newUser(String userName) {
-        if (userName.isEmpty()) return null;
+    public void newUser(String userName) {
+        if (userName.isEmpty()) return;
         userName = userName.strip();
-        return this.user = new User(userName);
+        this.user = new User(userName);
     }
 
-    private boolean checkUserInput(String input, Question question) {
+    public boolean checkUserInput(String input, Question question) {
         input = input.strip().replace(" ", "");
         String[] inputString = input.split(",");
         String[] choices = question.getChoices();
-        List<String> correctChoice = new ArrayList<>(Arrays.asList(question.getCorrectChoices()));
-        if (inputString.length > question.getCorrectChoices().length || inputString.length < question.getCorrectChoices().length) {
+
+        if (inputString.length != question.getCorrectChoices().length) {
             return false;
         }
 
-        List<String> userAnswer = new ArrayList<>();
         for (String s : inputString) {
-            if (Integer.parseInt(s) > 0 && Integer.parseInt(s) <= choices.length - 1) {
-                userAnswer.add(choices[Integer.parseInt(s) - 1]);
-            } else {
-                return false;
+            int index = Integer.parseInt(s);
+            if (index > 0 && index <= choices.length - 1){
+                if(!List.of(question.getCorrectChoices()).contains(choices[index-1])) return false;
             }
-        }
-
-        for (int i = 0; i < userAnswer.size(); i++) {
-            boolean isRight = correctChoice.contains(userAnswer.get(i));
-            if (!isRight) return false;
         }
         return true;
     }
 
-    public void decideGetPoint(String input, Question question) {
-        boolean isAnswerRight = checkUserInput(input, question);
+    public void decideGetPoint(boolean isAnswerRight, Question question) {
         if (isAnswerRight) {
             this.user.incrementScore(1);
             System.out.println("Deine Anwort war richtig! Weiter geht's....\n");
@@ -104,16 +109,16 @@ public class Quiz {
 
     }
 
-    public String scoreBoard(){
+    public String scoreBoard(int questionCounter){
         StringBuilder sb = new StringBuilder();
         sb.append("Dein Spiel ist zu Ende, " + this.user.getUsername() + "!\n");
         int userScore = user.getScore();
         if(userScore <= 0 ){
             sb.append("Du hast keine Punkte bekommen!");
-        }else if (userScore == questionList.size()){
+        }else if (userScore == questionCounter){
             sb.append("Du bist der Burner...!🤩 Alle Frage richtig beantwortet!");
         }else {
-            sb.append("Du hast von " + questionList.size() + " Fragen " + this.user.getScore() + " richtig beantwortet!");
+            sb.append("Du hast von " + questionCounter + " Fragen " + this.user.getScore() + " richtig beantwortet!");
         }
         return sb.toString();
     }
