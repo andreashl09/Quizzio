@@ -24,14 +24,23 @@ public class Main {
         }
 
         int questionCounter = 1;
-
-        while (true){
             System.out.println("Lass uns starten " + user + "!");
             System.out.println("Du kannst das Quiz jeder Zeit mit der Eingabe '9' beenden!\n" );
+
+
+        while (quiz.enoughQuestionsAvailable()){
+
             System.out.println(questionCounter + ". Frage:");
-            quiz.playQuestion();
-            break;
+
+            Question playQuestion = quiz.playQuestion();
+
+            System.out.print("Deine Anwort/en: ");
+            String choiceUser = scanner.next();
+            if(choiceUser.equals("9")) break;
+            quiz.decideGetPoint(choiceUser, playQuestion);
+            questionCounter++;
         }
+            System.out.println(quiz.scoreBoard());
 
 
 
